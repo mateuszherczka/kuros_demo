@@ -28,7 +28,12 @@ private:
     int handledCount = 0;
     int streamedResponseCount = 0;
 
+    /*
+    trajectory_vec is a vector of frames, a "trajectory".
+    info_vec is a vector of int parameters for a trajectory.
+    */
     std::vector< trajectory_vec > trajectoryQueue;
+    std::vector< info_vec > trajectoryInfoQueue;
 
     trajectory_vec capturedFrames;
 
