@@ -12,6 +12,7 @@ int main()
     aserver.startListening();   // blocks until connection
 
     // from now on the HandlingServer deals with the robot.
+    // in this demo, the handleResponse() method
 
     // receive ready response from robot
 

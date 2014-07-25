@@ -1,7 +1,12 @@
 #ifndef HANDLINGSERVER_H
 #define HANDLINGSERVER_H
 
-#include "kuros.h"
+#include <kuros.h>
+#include <DataFile.hpp>
+#include <queue>
+#include <string>
+
+#include <boost/format.hpp>
 
 
 class HandlingServer : public Server
@@ -32,10 +37,32 @@ private:
     trajectory_vec is a vector of frames, a "trajectory".
     info_vec is a vector of int parameters for a trajectory.
     */
-    std::vector< trajectory_vec > trajectoryQueue;
-    std::vector< info_vec > trajectoryInfoQueue;
+    std::queue< trajectory_vec > trajectoryQueue;
+    std::queue< info_vec > infoQueue;
 
     trajectory_vec capturedFrames;
+
+    // some trajectories made in matlab
+    std::vector <std::string> filenames { "spiral.txt", "fourpoints.txt", "home.txt" };
+
+    /*
+    Response modes:
+
+    1   response when done with BCO, about to run a trajectory, done with a trajectory, exiting
+    2   mode 1 + stream of responses every N ms while running a trajectory (stream stops when trajectory done)
+    3   mode 1 + stream of responses every N ms all the time
+
+    */
+
+    // lets define default trajectory parameters (integers)
+    info_vec trajInfo { 2,       // response mode
+                        20,      // response stream interval N ms (probably 12ms is the smallest possible)
+                        1,       // trajectory id, returned by robot when running trajectory
+                        1,       // 1 = keep running, 0 = exit after finishing trajectory
+                        200,     // velocity [mm/s], 200 is a comfortable number, max is around 2000
+                        20,      // distance [mm] when robot is allowed to start approximating a point
+                        1       // framecount in trajectory, **very important to be correct**
+                      };
 
     /*
     Robot status as sent by the robot:
@@ -54,7 +81,7 @@ private:
     //---------------------------------------------------------
 
     /*
-    Loads and enqueues trajectories in trajectoryQueue.
+    Loads and enqueues trajectories.
     */
     void loadTrajectories();
 

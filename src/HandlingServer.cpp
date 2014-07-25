@@ -21,20 +21,76 @@ void HandlingServer::handleResponse()
 
     switch (robotStatus)
     {
-        case 0: // not connected or exiting
+    case 0: // not connected or exiting
+        cout << "Robot offline." << endl;
+        break;
 
-        case 1: // BCO completed, ready
+    case 1: // BCO completed, ready
 
-            // send first trajectory
+        loadTrajectories(); // load trajectories
 
-        case 2: // Received trajectory, about to move
+        if (!infoQueue.empty() && !trajectoryQueue.empty()) // some success in loading
+        {
+            sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
+            infoQueue.pop();
+            trajectoryQueue.pop();
+        }
 
-        case 3: // Executing trajectory, moving
+        break;
 
-        case 4: // Finished trajectory, ready for next
+    case 2: // Received trajectory, about to move
 
-            // send next available trajectory
-            // last trajectory will have running = 0
+        // start capturing frames from robot
+        capturedFrames.clear();
+        capturedFrames.push_back(response.frame);
+
+    case 3: // Executing trajectory, moving
+
+        // continue capturing frames from robot
+        capturedFrames.push_back(response.frame);
+
+    case 4: // Finished trajectory, ready for next
+
+        // end capturing frames from robot
+        capturedFrames.push_back(response.frame);
+
+        // write captured to file
+        cout << "----------------------------------" << endl;
+        cout << "Saving trajectory id " << response.info[1] << endl;
+        std::string captureName = (boost::format("captured_%1%.txt") %response.info[1]).str();
+        cout << "Filename:  " << captureName << endl;
+        cout << "----------------------------------" << endl;
+        try
+        {
+            std::ofstream captureFile;
+            captureFile.open( captureName );
+
+            for (auto frame : capturedFrames)
+            {
+                for (auto val : frame)
+                {
+                    captureFile << val << " ";
+                }
+                captureFile << "\n";
+            }
+
+        }
+        catch (exception &e)
+        {
+            cerr << "Failed writing captured data to file: " << e.what();
+        }
+
+        // send next available trajectory
+        // last trajectory has running = 0 so robot will exit
+
+        if (!infoQueue.empty() && !trajectoryQueue.empty())
+        {
+            sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
+            infoQueue.pop();
+            trajectoryQueue.pop();
+        }
+
+        break;
     }
 
 
@@ -59,52 +115,45 @@ void HandlingServer::loadTrajectories()
     // helper for loading
     DataFile dataFile;
 
-    /*
-    Response modes:
+    int filecount = boost::lexical_cast<int>(filenames.size()); // the lexical_cast eliminates compiler warning
 
-    1   response when done with BCO, about to run a trajectory, done with a trajectory, exiting
-    2   mode 1 + stream of responses every N ms while running a trajectory (stream stops when trajectory done)
-    3   mode 1 + stream of responses every N ms all the time
-
-    */
-
-    // lets define default trajectory parameters (integers)
-    info_vec trajInfo { 2       // response mode
-                        20      // response stream interval N ms (probably 12ms is the smallest possible)
-                        1       // trajectory id, returned by robot when running trajectory
-                        1       // 1 = keep running, 0 = exit after finishing trajectory
-                        200     // velocity [mm/s], 200 is a comfortable number, max is around 2000
-                        20      // distance [mm] when robot is allowed to start approximating a point
-                        1       // framecount in trajectory, **very important to be correct**
-                      };
-
-    // trajectories made in matlab
-    std::vector <std::string> filenameQueue { "spiral.txt", "fourpoints.txt", "home.txt" };
-
-    // load and enqueue frames and infos
+    // start assigning id's, arbitrary, let's define id=0 as "non-existent"
     int trajectoryId = 1;
-    for (auto filename : filenameQueue)
+
+    // load and enqueue each file
+    for (auto file : filenames)
     {
         trajectory_vec trajectory;
-        dataFile.loadSpaceDelimited(filename, trajectory);  // store file contents in trajectory vector
+        dataFile.loadSDFrames(file, trajectory);  // load a file and store contents in trajectory vector
 
-        trajectoryQueue.push_back(trajectory);
-
-        // each trajectory gets an id
-        trajInfo[2] = trajectoryId;
-
-        // if last trajectory, set running to 0
-        if (trajectoryId == boost::lexical_cast<int>filenameQueue.size())
+        if (!trajectory.empty())    // some success in loading is required
         {
-            trajInfo[3] = 0;
+            // each trajectory gets an id
+            trajInfo[2] = trajectoryId;
+            trajInfo[4] = 200;  // velocity 200 for all except...
+
+            // let's do double velocity on fourpoints
+            if (trajectoryId == 2)
+            {
+                trajInfo[4] = 400;
+            }
+
+            // if last trajectory, set running to 0 so robot exits
+            if (trajectoryId == filecount)
+            {
+                trajInfo[3] = 0;
+            }
+
+            // **required** set the framecount
+            // here assuming each frame in trajectory_vec is correct, we use size of trajectory vector
+            trajInfo[6] = boost::lexical_cast<int>(trajectory.size());  // the lexical_cast eliminates compiler warning
+
+            // enqueue info and trajectory
+            trajectoryQueue.push(trajectory);
+            infoQueue.push(trajInfo);
+
+            ++trajectoryId;
         }
-
-        // set the framecount, here assuming each frame in trajectory_vec is correct (a weak assumption)
-        trajInfo[6] = boost::lexical_cast<int>(trajectory.size());
-
-        trajectoryInfoQueue.push_back(trajInfo);
-
-        ++trajectoryId;
     }
 
 }
