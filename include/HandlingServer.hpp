@@ -61,7 +61,8 @@ private:
                         1,       // 1 = keep running, 0 = exit after finishing trajectory
                         200,     // velocity [mm/s], 200 is a comfortable number, max is around 2000
                         20,      // distance [mm] when robot is allowed to start approximating a point
-                        1       // framecount in trajectory, **very important to be correct**
+                        1,       // frame type, 1 = cartesian, 2 = joint axis
+                        0        // framecount in trajectory, **very important to be correct**
                       };
 
     /*

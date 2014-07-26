@@ -129,24 +129,24 @@ void HandlingServer::loadTrajectories()
         if (!trajectory.empty())    // some success in loading is required
         {
             // each trajectory gets an id
-            trajInfo[2] = trajectoryId;
-            trajInfo[4] = 200;  // velocity 200 for all except...
+            trajInfo[KUKA_TRAJID] = trajectoryId;
+            trajInfo[KUKA_VEL] = 200;  // velocity 200 for all except...
 
             // let's do double velocity on fourpoints
             if (trajectoryId == 2)
             {
-                trajInfo[4] = 400;
+                trajInfo[KUKA_VEL] = 400;
             }
 
             // if last trajectory, set running to 0 so robot exits
             if (trajectoryId == filecount)
             {
-                trajInfo[3] = 0;
+                trajInfo[KUKA_RUN] = 0;
             }
 
             // **required** set the framecount
             // here assuming each frame in trajectory_vec is correct, we use size of trajectory vector
-            trajInfo[6] = boost::lexical_cast<int>(trajectory.size());  // the lexical_cast eliminates compiler warning
+            trajInfo[KUKA_FRAMECOUNT] = boost::lexical_cast<int>(trajectory.size());  // the lexical_cast eliminates compiler warning
 
             // enqueue info and trajectory
             trajectoryQueue.push(trajectory);

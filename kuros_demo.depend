@@ -2,14 +2,15 @@
 1406210057 source:/home/mh/dev/kuros_demo/main.cpp
 	<iostream>
 
-1406210938 source:/home/mh/dev/kuros_demo/src/HandlingServer.cpp
+1406300990 source:/home/mh/dev/kuros_demo/src/HandlingServer.cpp
 	"HandlingServer.hpp"
 
-1406295100 /home/mh/dev/kuros_demo/include/HandlingServer.hpp
+1406300592 /home/mh/dev/kuros_demo/include/HandlingServer.hpp
 	<kuros.h>
 	<DataFile.hpp>
 	<queue>
 	<string>
+	<boost/format.hpp>
 
 1406204359 /home/mh/dev/kuros/include/kuros.h
 	<types.hpp>
@@ -19,7 +20,7 @@
 	<vector>
 	<iostream>
 
-1406273575 /home/mh/dev/kuros/include/Server.hpp
+1406362047 /home/mh/dev/kuros/include/Server.hpp
 	<iostream>
 	<istream>
 	<ostream>
@@ -63,15 +64,15 @@
 	<android/log.h>
 	<assert.h>
 
-1406282609 /home/mh/dev/kuros/include/KukaResponse.hpp
+1406361227 /home/mh/dev/kuros/include/KukaResponse.hpp
 	<vector>
 	<XMLParser.hpp>
 
-1406206842 /home/mh/dev/kuros/include/KukaCommand.hpp
+1406361977 /home/mh/dev/kuros/include/KukaCommand.hpp
 	<types.hpp>
 	<boost/asio.hpp>
 
-1406275499 source:/home/mh/dev/kuros_demo/src/kuros_demo_main.cpp
+1406298807 source:/home/mh/dev/kuros_demo/src/kuros_demo_main.cpp
 	<iostream>
 	<HandlingServer.hpp>
 
