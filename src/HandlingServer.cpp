@@ -29,12 +29,7 @@ void HandlingServer::handleResponse()
 
         loadTrajectories(); // load trajectories
 
-        if (!infoQueue.empty() && !trajectoryQueue.empty()) // some success in loading
-        {
-            sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
-            infoQueue.pop();
-            trajectoryQueue.pop();
-        }
+        sendNextTrajectory();
 
         break;
 
@@ -77,18 +72,12 @@ void HandlingServer::handleResponse()
         }
         catch (exception &e)
         {
-            cerr << "Failed writing captured data to file: " << e.what();
+            cerr << "Exception writing captured data to file: " << e.what();
         }
 
         // send next available trajectory
-        // last trajectory has running = 0 so robot will exit
 
-        if (!infoQueue.empty() && !trajectoryQueue.empty())
-        {
-            sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
-            infoQueue.pop();
-            trajectoryQueue.pop();
-        }
+        sendNextTrajectory();
 
         break;
     }
@@ -110,50 +99,74 @@ void HandlingServer::handleDisconnect()
     cout << "Server disconnected." << endl;
 }
 
+void HandlingServer::sendNextTrajectory()
+{
+    if (!infoQueue.empty() && !trajectoryQueue.empty())
+        {
+            sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
+            infoQueue.pop();
+            trajectoryQueue.pop();
+        }
+}
+
 void HandlingServer::loadTrajectories()
 {
     // helper for loading
     DataFile dataFile;
 
-    int filecount = boost::lexical_cast<int>(filenames.size()); // the lexical_cast eliminates compiler warning
+    // load from file
+    trajectory_vec trajectory;  // trajectory vector
+    dataFile.loadSDFrames(trajectoryFile, trajectory);  // store file contents in trajectory vector
 
-    // start assigning id's, arbitrary, let's define id=0 as "non-existent"
-    int trajectoryId = 1;
-
-    // load and enqueue each file
-    for (auto file : filenames)
+    if (trajectory.empty()) // we don't want to send empty trajectories
     {
-        trajectory_vec trajectory;
-        dataFile.loadSDFrames(file, trajectory);  // load a file and store contents in trajectory vector
-
-        if (!trajectory.empty())    // some success in loading is required
-        {
-            // each trajectory gets an id
-            trajInfo[KUKA_TRAJID] = trajectoryId;
-            trajInfo[KUKA_VEL] = 200;  // velocity 200 for all except...
-
-            // let's do double velocity on fourpoints
-            if (trajectoryId == 2)
-            {
-                trajInfo[KUKA_VEL] = 400;
-            }
-
-            // if last trajectory, set running to 0 so robot exits
-            if (trajectoryId == filecount)
-            {
-                trajInfo[KUKA_RUN] = 0;
-            }
-
-            // **required** set the framecount
-            // here assuming each frame in trajectory_vec is correct, we use size of trajectory vector
-            trajInfo[KUKA_FRAMECOUNT] = boost::lexical_cast<int>(trajectory.size());  // the lexical_cast eliminates compiler warning
-
-            // enqueue info and trajectory
-            trajectoryQueue.push(trajectory);
-            infoQueue.push(trajInfo);
-
-            ++trajectoryId;
-        }
+        cerr << "Failure loading trajectory!" << endl;
+        return;
     }
+
+    // enqueue loaded trajectory (interpolated by robot)
+    trajectoryQueue.push(trajectory);
+    infoQueue.push(trajInfo);
+
+    // sample some points and make new trajectory (interpolated by robot)
+    trajectory_vec pointSampleTrajectory;
+    pointSampleTrajectory.push_back(trajectory.front());
+    pointSampleTrajectory.push_back(trajectory[10]);
+    pointSampleTrajectory.push_back(trajectory[20]);
+    pointSampleTrajectory.push_back(trajectory[30]);
+    pointSampleTrajectory.push_back(trajectory.back());
+
+    ++trajInfo[KUKA_TRAJID];
+    trajectoryQueue.push(trajectory);
+    infoQueue.push(trajInfo);
+
+    // sample same points and enqueue as separate trajectories
+    // these will be linear (not interpolated by robot)
+    trajectory_vec pose;
+
+    pose.push_back(trajectory.front());
+    ++trajInfo[KUKA_TRAJID];
+    trajectoryQueue.push(pose);
+    infoQueue.push(trajInfo);
+
+    pose[0] = trajectory[10];
+    ++trajInfo[KUKA_TRAJID];
+    trajectoryQueue.push(pose);
+    infoQueue.push(trajInfo);
+
+    pose[0] = trajectory[20];
+    ++trajInfo[KUKA_TRAJID];
+    trajectoryQueue.push(pose);
+    infoQueue.push(trajInfo);
+
+    pose[0] = trajectory[30];
+    ++trajInfo[KUKA_TRAJID];
+    trajectoryQueue.push(pose);
+    infoQueue.push(trajInfo);
+
+    pose[0] = trajectory.back();
+    ++trajInfo[KUKA_TRAJID];
+    trajectoryQueue.push(pose);
+    infoQueue.push(trajInfo);
 
 }
