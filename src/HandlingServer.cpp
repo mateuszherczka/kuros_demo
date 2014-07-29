@@ -35,9 +35,11 @@ void HandlingServer::handleResponse()
 
     case 2: // Received trajectory, about to move
 
-        // start capturing frames from robot
-        capturedFrames.clear();
-        capturedFrames.push_back(response.frame);
+        if (!nowCapturing)
+        {
+            startCapturing();
+        }
+
 
     case 3: // Executing trajectory, moving
 
@@ -46,33 +48,9 @@ void HandlingServer::handleResponse()
 
     case 4: // Finished trajectory, ready for next
 
-        // end capturing frames from robot
-        capturedFrames.push_back(response.frame);
-
-        // write captured to file
-        cout << "----------------------------------" << endl;
-        cout << "Saving trajectory id " << response.info[1] << endl;
-        std::string captureName = (boost::format("captured_%1%.txt") %response.info[1]).str();
-        cout << "Filename:  " << captureName << endl;
-        cout << "----------------------------------" << endl;
-        try
+        if (nowCapturing)
         {
-            std::ofstream captureFile;
-            captureFile.open( captureName );
-
-            for (auto frame : capturedFrames)
-            {
-                for (auto val : frame)
-                {
-                    captureFile << val << " ";
-                }
-                captureFile << "\n";
-            }
-
-        }
-        catch (exception &e)
-        {
-            cerr << "Exception writing captured data to file: " << e.what();
+            finishCapturing();
         }
 
         // send next available trajectory
@@ -82,13 +60,17 @@ void HandlingServer::handleResponse()
         break;
     }
 
+    // print the non-stream responses
+    if (robotStatus != 3)
+    {
+        cout << "------------------------------------------------" << endl;
+        cout << "Response #" << handledCount << endl;
 
-    cout << "------------------------------------------------" << endl;
-    cout << "Response #" << handledCount << endl;
+        response.printValues();
 
-    response.printValues();
+        cout << "------------------------------------------------" << endl;
+    }
 
-    cout << "------------------------------------------------" << endl;
 
     ++handledCount;
 }
@@ -107,6 +89,47 @@ void HandlingServer::sendNextTrajectory()
             infoQueue.pop();
             trajectoryQueue.pop();
         }
+}
+
+void HandlingServer::startCapturing()
+{
+    // start capturing frames from robot
+    capturedFrames.clear();
+    nowCapturing = true;
+    capturedFrames.push_back(response.frame);
+}
+
+void HandlingServer::finishCapturing()
+{
+    // end capturing frames from robot
+    capturedFrames.push_back(response.frame);
+    nowCapturing = false;
+
+    // write captured to file
+    cout << "----------------------------------" << endl;
+    cout << "Saving trajectory id " << response.info[1] << endl;
+    std::string captureName = (boost::format("captured_%1%.txt") %response.info[1]).str();
+    cout << "Filename:  " << captureName << endl;
+    cout << "----------------------------------" << endl;
+    try
+    {
+        std::ofstream captureFile;
+        captureFile.open( captureName );
+
+        for (auto frame : capturedFrames)
+        {
+            for (auto val : frame)
+            {
+                captureFile << val << " ";
+            }
+            captureFile << "\n";
+        }
+
+    }
+    catch (exception &e)
+    {
+        cerr << "Exception writing captured data to file: " << e.what();
+    }
 }
 
 void HandlingServer::loadTrajectories()

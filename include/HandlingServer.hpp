@@ -75,6 +75,7 @@ private:
 
     */
     int robotStatus = 0;
+    bool nowCapturing = false;
 
     //---------------------------------------------------------
     // Methods
@@ -86,9 +87,18 @@ private:
     void loadTrajectories();
 
     /*
+    Pops queue and sends.
+    */
+    void sendNextTrajectory();
+
+    /*
     Saves capturedFrames to a space delimited file.
     */
     void saveCaptured();
+
+    void finishCapturing();
+
+    void startCapturing();
 
 
 };

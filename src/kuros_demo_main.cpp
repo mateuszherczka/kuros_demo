@@ -12,25 +12,12 @@ int main()
     aserver.startListening();   // blocks until connection
 
     // from now on the HandlingServer deals with the robot.
-    // in this demo, the handleResponse() method
 
-    // receive ready response from robot
+    // idle
+    while( aserver.isConnected() ) {
 
-    // load trajectories from files
-
-    // enqueue trajectories
-
-        // send 1st traj
-
-        // receive next ready response
-
-        // send 2d traj
-
-        // receive next ready ... etc
-
-    // send last "home" trajectory with a running=0
-
-    // exit
+        boost::this_thread::sleep( boost::posix_time::milliseconds(100));   // idle
+    }
 
     cout << "Hello world!" << endl;
     return 0;
