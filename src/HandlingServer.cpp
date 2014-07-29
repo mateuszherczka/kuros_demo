@@ -6,26 +6,20 @@ HandlingServer::~HandlingServer() {}
 
 void HandlingServer::handleResponse()
 {
-    /*
-    Response info vector:
+    ++handledCount;
 
-    index   message
-    ---------------
-    0       Status
-    1       Trajectory Id
-    2       Tick (sent time)
-
-    */
+    // let's capture response stream to file for each trajectory
 
     robotStatus = response.info[0];
 
     switch (robotStatus)
     {
     case 0: // not connected or exiting
-        cout << "Robot offline." << endl;
+        cout << "Robot offline.\n";
         break;
 
     case 1: // BCO completed, ready
+        printResponse();
 
         loadTrajectories(); // load trajectories
 
@@ -34,19 +28,16 @@ void HandlingServer::handleResponse()
         break;
 
     case 2: // Received trajectory, about to move
+        printResponse();
 
         if (!nowCapturing)
         {
             startCapturing();
         }
-
-
-    case 3: // Executing trajectory, moving
-
-        // continue capturing frames from robot
-        capturedFrames.push_back(response.frame);
+        break;
 
     case 4: // Finished trajectory, ready for next
+        printResponse();
 
         if (nowCapturing)
         {
@@ -54,41 +45,46 @@ void HandlingServer::handleResponse()
         }
 
         // send next available trajectory
-
         sendNextTrajectory();
 
         break;
+
+    case 5: //  means "streamed message"
+
+        // capture frames from robot to RAM
+        capturedFrames.push_back(response.frame);
+
+        break;
+
     }
 
-    // print the non-stream responses
-    if (robotStatus != 3)
-    {
-        cout << "------------------------------------------------" << endl;
-        cout << "Response #" << handledCount << endl;
-
-        response.printValues();
-
-        cout << "------------------------------------------------" << endl;
-    }
-
-
-    ++handledCount;
 }
 
 void HandlingServer::handleDisconnect()
 {
-    // we can call startListening() again
+    // we can call startListening() again if we want
     cout << "Server disconnected." << endl;
+}
+
+void HandlingServer::printResponse()
+{
+    cout << "------------------------------------------------" << endl;
+    cout << "Response #" << handledCount << endl;
+
+    response.printValues();
+
+    cout << "------------------------------------------------" << endl;
+
 }
 
 void HandlingServer::sendNextTrajectory()
 {
     if (!infoQueue.empty() && !trajectoryQueue.empty())
-        {
-            sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
-            infoQueue.pop();
-            trajectoryQueue.pop();
-        }
+    {
+        sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
+        infoQueue.pop();
+        trajectoryQueue.pop();
+    }
 }
 
 void HandlingServer::startCapturing()

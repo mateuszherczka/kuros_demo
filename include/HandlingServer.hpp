@@ -100,7 +100,7 @@ private:
 
     void startCapturing();
 
-
+    void printResponse();
 };
 
 #endif // HANDLINGSERVER_H
