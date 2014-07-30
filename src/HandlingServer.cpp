@@ -10,7 +10,7 @@ void HandlingServer::handleResponse()
 
     // let's capture response stream to file for each trajectory
 
-    robotStatus = response.info[0];
+    robotStatus = response.info[KUKA_RSP_STATUS];
 
     switch (robotStatus)
     {
@@ -103,8 +103,8 @@ void HandlingServer::finishCapturing()
 
     // write captured to file
     cout << "----------------------------------" << endl;
-    cout << "Saving trajectory id " << response.info[1] << endl;
-    std::string captureName = (boost::format("captured_%1%.txt") %response.info[1]).str();
+    cout << "Saving trajectory id " << response.info[KUKA_RSP_TRAJID] << endl;
+    std::string captureName = (boost::format("captured_%1%.txt") %response.info[KUKA_RSP_TRAJID]).str();
     cout << "Filename:  " << captureName << endl;
     cout << "----------------------------------" << endl;
     try
@@ -156,7 +156,7 @@ void HandlingServer::loadTrajectories()
     pointSampleTrajectory.push_back(trajectory.back());
 
     ++trajInfo[KUKA_TRAJID];
-    trajectoryQueue.push(trajectory);
+    trajectoryQueue.push(pointSampleTrajectory);
     infoQueue.push(trajInfo);
 
     // sample same points and enqueue as separate trajectories
