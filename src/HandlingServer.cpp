@@ -4,22 +4,22 @@ HandlingServer::HandlingServer() {}
 
 HandlingServer::~HandlingServer() {}
 
-void HandlingServer::handleResponse()
+void HandlingServer::handleResponse(const KukaResponse &response)
 {
     ++handledCount;
 
     // let's capture response stream to file for each trajectory
 
-    robotStatus = response.info[KUKA_RSP_STATUS];
+    //robotStatus = response.info[KUKA_RSP_STATUS];
 
-    switch (robotStatus)
+    switch (response.info[KUKA_RSP_STATUS])
     {
-    case 0: // not connected or exiting
+    case KUKA_NOSTATUS: // not connected or exiting
         cout << "Robot offline.\n";
         break;
 
-    case 1: // BCO completed, ready
-        printResponse();
+    case KUKA_READY: // BCO completed, ready
+        printResponse(response);
 
         loadTrajectories(); // load trajectories
 
@@ -27,46 +27,71 @@ void HandlingServer::handleResponse()
 
         break;
 
-    case 2: // Received trajectory, about to move
-        printResponse();
+    case KUKA_TRAJ_START: // Received trajectory, about to move
+        printResponse(response);
 
         if (!nowCapturing)
         {
-            startCapturing();
+            nowCapturing = true;
+            startCapturing(response);
         }
+
         break;
 
-    case 4: // Finished trajectory, ready for next
-        printResponse();
+    case 3: // Received trajectory, about to move
+        printResponse(response);
+
+        cout << "We shouldn't be getting status 3, work in progress!" << endl;
+
+        break;
+
+    case KUKA_TRAJ_DONE: // Finished trajectory, ready for next
+        printResponse(response);
 
         if (nowCapturing)
         {
-            finishCapturing();
+            finishCapturing(response);
         }
+        nowCapturing = false;
 
         // send next available trajectory
         sendNextTrajectory();
 
         break;
 
-    case 5: //  means "streamed message"
+    case KUKA_STREAM: //  means "streamed message"
 
         // capture frames from robot to RAM
-        capturedFrames.push_back(response.frame);
+        if (nowCapturing)
+        {
+            capturedFrames.push_back(response.frame);
+        }
 
         break;
-
     }
-
 }
 
 void HandlingServer::handleDisconnect()
 {
-    // we can call startListening() again if we want
-    cout << "Server disconnected." << endl;
+    // we can also call startListening() again if we want
+    cout << "Robot disconnected, cleaning up." << endl;
+
+    nowCapturing = false;
+    capturedFrames.clear();
+    robotStatus = 0;
+
+    while(!trajectoryQueue.empty())
+    {
+        trajectoryQueue.pop();
+    }
+
+    while(!infoQueue.empty())
+    {
+        infoQueue.pop();
+    }
 }
 
-void HandlingServer::printResponse()
+void HandlingServer::printResponse(const KukaResponse &response)
 {
     cout << "------------------------------------------------" << endl;
     cout << "Response #" << handledCount << endl;
@@ -81,25 +106,25 @@ void HandlingServer::sendNextTrajectory()
 {
     if (!infoQueue.empty() && !trajectoryQueue.empty())
     {
+        cout << "Sending next trajectory." << endl;
         sendTrajectory(infoQueue.front(),trajectoryQueue.front());    // send the first one
         infoQueue.pop();
         trajectoryQueue.pop();
     }
 }
 
-void HandlingServer::startCapturing()
+void HandlingServer::startCapturing(const KukaResponse &response)
 {
     // start capturing frames from robot
     capturedFrames.clear();
-    nowCapturing = true;
     capturedFrames.push_back(response.frame);
 }
 
-void HandlingServer::finishCapturing()
+void HandlingServer::finishCapturing(const KukaResponse &response)
 {
     // end capturing frames from robot
     capturedFrames.push_back(response.frame);
-    nowCapturing = false;
+
 
     // write captured to file
     cout << "----------------------------------" << endl;
@@ -126,6 +151,7 @@ void HandlingServer::finishCapturing()
     {
         cerr << "Exception writing captured data to file: " << e.what();
     }
+
 }
 
 void HandlingServer::loadTrajectories()
@@ -187,5 +213,7 @@ void HandlingServer::loadTrajectories()
     ++trajInfo[KUKA_TRAJID];
     trajectoryQueue.push(pose);
     infoQueue.push(trajInfo);
+
+    cout << "Loaded trajectory. TrajectoryQueue has " << trajectoryQueue.size() << " items and infoQueue has " << infoQueue.size() << " items." << endl;
 
 }
