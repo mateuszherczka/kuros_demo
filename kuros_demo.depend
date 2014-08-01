@@ -2,7 +2,7 @@
 1406210057 source:/home/mh/dev/kuros_demo/main.cpp
 	<iostream>
 
-1406814322 source:/home/mh/dev/kuros_demo/src/HandlingServer.cpp
+1406896921 source:/home/mh/dev/kuros_demo/src/HandlingServer.cpp
 	"HandlingServer.hpp"
 
 1406814192 /home/mh/dev/kuros_demo/include/HandlingServer.hpp
@@ -22,24 +22,28 @@
 	<vector>
 	<iostream>
 
-1406797069 /home/mh/dev/kuros/include/Server.hpp
+1406899253 /home/mh/dev/kuros/include/Server.hpp
 	<iostream>
 	<istream>
 	<ostream>
 	<string>
 	<boost/asio.hpp>
 	<boost/thread.hpp>
+	<boost/thread/mutex.hpp>
+	<boost/thread/locks.hpp>
+	<boost/thread/lock_guard.hpp>
 	<ThreadSafeQueue.hpp>
 	<types.hpp>
 	<ServerConfig.hpp>
 	<KukaResponse.hpp>
 	<KukaCommand.hpp>
 
-1405522202 /home/mh/dev/kuros/include/ThreadSafeQueue.hpp
+1406896371 /home/mh/dev/kuros/include/ThreadSafeQueue.hpp
 	<mutex>
 	<condition_variable>
 	<queue>
 	<memory>
+	<iostream>
 
 1406208381 /home/mh/dev/kuros/include/ServerConfig.hpp
 	<XMLParser.hpp>
@@ -93,7 +97,7 @@
 
 1406793857 /home/mh/dev/kuros/include/constants.hpp
 
-1406796258 /home/mh/dev/kuros/include/BlockingServer.hpp
+1406901816 /home/mh/dev/kuros/include/BlockingServer.hpp
 	<Server.hpp>
 	<boost/thread.hpp>
 

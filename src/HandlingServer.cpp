@@ -73,7 +73,6 @@ void HandlingServer::handleResponse(const KukaResponse &response)
 
 void HandlingServer::handleDisconnect()
 {
-    // we can also call startListening() again if we want
     cout << "Robot disconnected, cleaning up." << endl;
 
     nowCapturing = false;
