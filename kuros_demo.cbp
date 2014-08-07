@@ -36,10 +36,10 @@
 			<Add directory="../../Libraries/tinyXml2/include" />
 		</Compiler>
 		<Linker>
+			<Add option="-pthread" />
 			<Add library="../kuros/bin/Release/libkuros.a" />
 			<Add library="../../Libraries/tinyXml2/lib/libtinyxml2.a" />
 			<Add library="boost_system" />
-			<Add library="boost_thread" />
 		</Linker>
 		<Unit filename="include/HandlingServer.hpp" />
 		<Unit filename="src/HandlingServer.cpp" />

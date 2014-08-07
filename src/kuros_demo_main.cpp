@@ -13,11 +13,11 @@ int main()
 
     // from now on the HandlingServer deals with the robot.
 
-    // idle
-    while(aserver.isConnected())
+    // idle until server disconnects
+    while(aserver.isAccepting())
     {
 
-        boost::this_thread::sleep( boost::posix_time::milliseconds(100));   // idle
+        std::this_thread::sleep_for( std::chrono::milliseconds(100) );
     }
 
     return 0;

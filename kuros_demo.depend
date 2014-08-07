@@ -2,59 +2,58 @@
 1406210057 source:/home/mh/dev/kuros_demo/main.cpp
 	<iostream>
 
-1406896921 source:/home/mh/dev/kuros_demo/src/HandlingServer.cpp
+1406896920 source:/home/mh/dev/kuros_demo/src/HandlingServer.cpp
 	"HandlingServer.hpp"
 
-1406814192 /home/mh/dev/kuros_demo/include/HandlingServer.hpp
+1407417389 /home/mh/dev/kuros_demo/include/HandlingServer.hpp
 	<kuros.h>
 	<DataFile.hpp>
 	<queue>
 	<string>
 	<boost/format.hpp>
 
-1406795221 /home/mh/dev/kuros/include/kuros.h
+1406795220 /home/mh/dev/kuros/include/kuros.h
 	<constants.hpp>
 	<types.hpp>
 	<Server.hpp>
 	<BlockingServer.hpp>
 
-1406206813 /home/mh/dev/kuros/include/types.hpp
+1406206812 /home/mh/dev/kuros/include/types.hpp
 	<vector>
 	<iostream>
 
-1406899253 /home/mh/dev/kuros/include/Server.hpp
+1407396342 /home/mh/dev/kuros/include/Server.hpp
 	<iostream>
 	<istream>
 	<ostream>
 	<string>
+	<mutex>
+	<atomic>
+	<thread>
 	<boost/asio.hpp>
-	<boost/thread.hpp>
-	<boost/thread/mutex.hpp>
-	<boost/thread/locks.hpp>
-	<boost/thread/lock_guard.hpp>
-	<ThreadSafeQueue.hpp>
 	<types.hpp>
+	<ThreadSafeQueue.hpp>
 	<ServerConfig.hpp>
 	<KukaResponse.hpp>
 	<KukaCommand.hpp>
 
-1406896371 /home/mh/dev/kuros/include/ThreadSafeQueue.hpp
+1407396228 /home/mh/dev/kuros/include/ThreadSafeQueue.hpp
 	<mutex>
 	<condition_variable>
 	<queue>
 	<memory>
 	<iostream>
 
-1406208381 /home/mh/dev/kuros/include/ServerConfig.hpp
+1407396228 /home/mh/dev/kuros/include/ServerConfig.hpp
 	<XMLParser.hpp>
 
-1406207101 /home/mh/dev/kuros/include/XMLParser.hpp
+1407396404 /home/mh/dev/kuros/include/XMLParser.hpp
 	<boost/lexical_cast.hpp>
 	<boost/asio.hpp>
 	<tinyxml2.h>
 	<types.hpp>
 
-1404307912 /home/mh/Libraries/tinyXml2/include/tinyxml2.h
+1407089824 /home/mh/Libraries/tinyXml2/include/tinyxml2.h
 	<ctype.h>
 	<limits.h>
 	<stdio.h>
@@ -70,22 +69,22 @@
 	<android/log.h>
 	<assert.h>
 
-1406730533 /home/mh/dev/kuros/include/KukaResponse.hpp
+1407396228 /home/mh/dev/kuros/include/KukaResponse.hpp
 	<vector>
 	<constants.hpp>
 	<XMLParser.hpp>
 
-1406549486 /home/mh/dev/kuros/include/KukaCommand.hpp
+1407396228 /home/mh/dev/kuros/include/KukaCommand.hpp
 	<types.hpp>
 	<constants.hpp>
 	<boost/asio.hpp>
 	<boost/lexical_cast.hpp>
 
-1406811204 source:/home/mh/dev/kuros_demo/src/kuros_demo_main.cpp
+1407417063 source:/home/mh/dev/kuros_demo/src/kuros_demo_main.cpp
 	<iostream>
 	<HandlingServer.hpp>
 
-1406536170 /home/mh/dev/kuros/include/DataFile.hpp
+1407396228 /home/mh/dev/kuros/include/DataFile.hpp
 	<iostream>
 	<string>
 	<fstream>
@@ -95,9 +94,8 @@
 	<constants.hpp>
 	<types.hpp>
 
-1406793857 /home/mh/dev/kuros/include/constants.hpp
+1407417345 /home/mh/dev/kuros/include/constants.hpp
 
-1406901816 /home/mh/dev/kuros/include/BlockingServer.hpp
+1407396404 /home/mh/dev/kuros/include/BlockingServer.hpp
 	<Server.hpp>
-	<boost/thread.hpp>
 

@@ -54,25 +54,18 @@ private:
 
     */
 
-    // lets define default trajectory parameters (integers)
-    info_vec trajInfo { 3,       // response mode
-                        20,      // response stream interval N ms (probably 12ms is the smallest possible)
-                        1000,    // trajectory id, returned by robot when running trajectory
-                        1,       // 1 = keep running, 0 = exit after finishing trajectory
-                        200,     // velocity [mm/s], 200 is a comfortable number, max is around 2000
-                        20,      // distance [mm] when robot is allowed to start approximating a point
-                        1       // frame type, 1 = cartesian, 2 = joint axis
+    // lets define default trajectory parameters
+    info_vec trajInfo { KUKA_RMODE_STREAM,  // response mode
+                        20,                 // response stream interval N ms (probably 12ms is the smallest possible)
+                        1000,               // trajectory id, returned by robot when running trajectory
+                        YES,                // 1 = keep running, 0 = exit after finishing trajectory
+                        200,                // velocity [mm/s], 200 is a comfortable number, max is around 2000
+                        20,                 // distance [mm] when robot is allowed to start approximating a point
+                        KUKA_CARTESIAN      // frame type, 1 = cartesian, 2 = joint axis
                       };
 
     /*
-    Robot status as sent by the robot:
-
-    0   not connected or exiting
-    1   ready for session, 1st message from robot after BCO
-    2   received trajectory, about to start moving
-    3   executing trajectory, moving
-    4   finished trajectory, ready for next one
-
+    Robot status as sent by the robot (see constants.hpp in kuros):
     */
     int robotStatus = 0;
     bool nowCapturing = false;
