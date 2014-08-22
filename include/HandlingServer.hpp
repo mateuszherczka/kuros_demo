@@ -65,7 +65,7 @@ private:
                       };
 
     /*
-    Robot status as sent by the robot (see constants.hpp in kuros):
+    Robot status as sent by the robot (see kuros_constants.hpp in kuros):
     */
     int robotStatus = 0;
     bool nowCapturing = false;

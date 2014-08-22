@@ -5,7 +5,7 @@
 1406896920 source:/home/mh/dev/kuros_demo/src/HandlingServer.cpp
 	"HandlingServer.hpp"
 
-1407417389 /home/mh/dev/kuros_demo/include/HandlingServer.hpp
+1408711131 /home/mh/dev/kuros_demo/include/HandlingServer.hpp
 	<kuros.h>
 	<DataFile.hpp>
 	<queue>
@@ -80,8 +80,9 @@
 	<boost/asio.hpp>
 	<boost/lexical_cast.hpp>
 
-1407417063 source:/home/mh/dev/kuros_demo/src/kuros_demo_main.cpp
+1408711352 source:/home/mh/dev/kuros_demo/src/kuros_demo_main.cpp
 	<iostream>
+	<thread>
 	<HandlingServer.hpp>
 
 1407396228 /home/mh/dev/kuros/include/DataFile.hpp
@@ -94,8 +95,81 @@
 	<constants.hpp>
 	<types.hpp>
 
-1407417345 /home/mh/dev/kuros/include/constants.hpp
+1407503171 /home/mh/dev/kuros/include/constants.hpp
 
 1407396404 /home/mh/dev/kuros/include/BlockingServer.hpp
 	<Server.hpp>
+
+1408439421 /home/mh/dev/kuros03/include/kuros.h
+	<kuros_constants.hpp>
+	<types.hpp>
+	<Server.hpp>
+	<BlockingServer.hpp>
+
+1408439511 /home/mh/dev/kuros03/include/kuros_constants.hpp
+
+1406206812 /home/mh/dev/kuros03/include/types.hpp
+	<vector>
+	<iostream>
+
+1408351005 /home/mh/dev/kuros03/include/Server.hpp
+	<iostream>
+	<istream>
+	<ostream>
+	<string>
+	<boost/asio.hpp>
+	<boost/thread.hpp>
+	<boost/atomic.hpp>
+	<boost/thread/mutex.hpp>
+	<boost/date_time/posix_time/posix_time.hpp>
+	<types.hpp>
+	<ThreadSafeQueue03.hpp>
+	<ServerConfig.hpp>
+	<KukaResponse.hpp>
+	<KukaCommand.hpp>
+
+1408351844 /home/mh/dev/kuros03/include/ThreadSafeQueue03.hpp
+	<queue>
+	<boost/thread/condition_variable.hpp>
+	<boost/thread/mutex.hpp>
+	<iostream>
+
+1408352115 /home/mh/dev/kuros03/include/ServerConfig.hpp
+	<XMLParser.hpp>
+
+1408351945 /home/mh/dev/kuros03/include/XMLParser.hpp
+	<boost/lexical_cast.hpp>
+	<boost/asio.hpp>
+	<tinyxml2.h>
+	<types.hpp>
+
+1408439788 /home/mh/dev/kuros03/include/KukaResponse.hpp
+	<vector>
+	<kuros_constants.hpp>
+	<XMLParser.hpp>
+	<boost/foreach.hpp>
+
+1408439848 /home/mh/dev/kuros03/include/KukaCommand.hpp
+	<types.hpp>
+	<kuros_constants.hpp>
+	<boost/asio.hpp>
+	<boost/lexical_cast.hpp>
+	<boost/foreach.hpp>
+
+1408352424 /home/mh/dev/kuros03/include/BlockingServer.hpp
+	<Server.hpp>
+
+1408710689 /home/mh/dev/kuros_demo/include/DataFile.hpp
+	<iostream>
+	<string>
+	<fstream>
+	<math.h>
+	<boost/tokenizer.hpp>
+	<boost/lexical_cast.hpp>
+	<boost/foreach.hpp>
+	<kuros_constants.hpp>
+	<types.hpp>
+
+1408367205 source:/home/mh/dev/kuros_demo/src/DataFile.cpp
+	"DataFile.hpp"
 
